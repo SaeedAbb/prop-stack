@@ -178,6 +178,13 @@ jobs:
         java-version: '26'
         distribution: 'temurin'
 
+    - name: Configure git identity for tagging
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+      # Annotated tags (git tag -a) need a committer identity, same as a commit -
+      # the runner has none configured by default.
+
     - name: Tag backend release if version changed
       working-directory: backend
       run: |
