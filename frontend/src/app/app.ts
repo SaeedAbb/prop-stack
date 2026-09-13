@@ -10,6 +10,7 @@ import Keycloak from 'keycloak-js';
 import { map } from 'rxjs';
 import { OrgRoleService } from './core/services/org-role.service';
 
+// TEST COMMIT for /release verification - safe to remove after testing.
 interface KeycloakUserClaims {
   readonly name?: string;
   readonly preferred_username?: string;

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.propstack</groupId>
 	<artifactId>propstack-backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>propstack-backend</name>
 	<description>PropStack - Property Management Backend</description>
 	<url/>
