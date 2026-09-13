@@ -1,18 +1,70 @@
-.app-shell__header {
-  border-bottom: 1px solid #ddd;
+:host {
+  display: block;
+  height: 100%;
 }
 
-.app-shell__nav {
-  display: flex;
-  gap: 1.5rem;
-  padding: 1rem 1.5rem;
-}
+.app-shell {
+  height: 100%;
 
-.app-shell__link {
-  color: inherit;
-  text-decoration: none;
+  &__sidenav {
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--mat-sys-surface-container-low);
+    padding: 1rem 0.5rem;
+  }
 
-  &--active {
+  &__brand {
+    padding: 0.5rem 1rem 1rem;
+    font-size: 1.125rem;
     font-weight: 700;
+  }
+
+  &__nav {
+    flex: 1;
+  }
+
+  &__nav-item--active {
+    background-color: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+  }
+
+  &__account {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem 0.5rem;
+    border-top: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  &__account-identity {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__account-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__account-email {
+    font-size: 0.75rem;
+    color: var(--mat-sys-on-surface-variant);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__content {
+    display: block;
+  }
+
+  &__menu-toggle {
+    margin: 0.5rem;
   }
 }

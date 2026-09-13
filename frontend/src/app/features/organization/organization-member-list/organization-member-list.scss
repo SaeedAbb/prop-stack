@@ -4,23 +4,53 @@
   &__add-form {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: 0.75rem;
     margin-bottom: 1rem;
   }
 
   table {
     width: 100%;
-    border-collapse: collapse;
-  }
-
-  th,
-  td {
-    text-align: left;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid #ddd;
   }
 
   .error {
     color: #b91c1c;
+  }
+}
+
+.member-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  &__identity {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  &__email {
+    font-size: 0.8125rem;
+    color: var(--mat-sys-on-surface-variant);
   }
 }

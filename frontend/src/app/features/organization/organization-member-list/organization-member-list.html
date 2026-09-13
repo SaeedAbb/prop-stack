@@ -5,54 +5,73 @@
     class="organization-member-list__add-form"
     (submit)="onAddMember($event, emailInput.value, firstNameInput.value, lastNameInput.value)"
   >
-    <input #emailInput type="email" name="email" placeholder="person@example.com" required />
-    <input #firstNameInput type="text" name="firstName" placeholder="First name (new person only)" />
-    <input #lastNameInput type="text" name="lastName" placeholder="Last name (new person only)" />
-    <button type="submit" [disabled]="addPending()">Add member</button>
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput #emailInput type="email" name="email" placeholder="person@example.com" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>First name</mat-label>
+      <input matInput #firstNameInput type="text" name="firstName" placeholder="New person only" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Last name</mat-label>
+      <input matInput #lastNameInput type="text" name="lastName" placeholder="New person only" />
+    </mat-form-field>
+
+    <button mat-flat-button type="submit" [disabled]="addPending()">Add member</button>
   </form>
 
   @if (addErrorMessage(); as message) {
     <p class="error">{{ message }}</p>
   }
 
-  @if (loading()) {
-    <p>Loading members…</p>
-  } @else if (errorMessage(); as message) {
+  @if (errorMessage(); as message) {
     <p class="error">{{ message }}</p>
+  } @else if (loading()) {
+    <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
   } @else {
     @if (removeErrorMessage(); as message) {
       <p class="error">{{ message }}</p>
     }
 
-    <table>
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th>First name</th>
-          <th>Last name</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (member of members(); track member.id) {
-          <tr>
-            <td>{{ member.email }}</td>
-            <td>{{ member.firstName }}</td>
-            <td>{{ member.lastName }}</td>
-            <td>
-              @if (member.id !== currentUserId()) {
-                <button type="button" [disabled]="removingMemberId() === member.id" (click)="onRemoveMember(member)">
-                  Remove
-                </button>
-              }
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="4">No members yet.</td>
-          </tr>
-        }
-      </tbody>
+    <table mat-table [dataSource]="members()">
+      <ng-container matColumnDef="member">
+        <th mat-header-cell *matHeaderCellDef>Member</th>
+        <td mat-cell *matCellDef="let member">
+          <div class="member-cell">
+            <div class="member-cell__avatar">{{ member | memberInitials }}</div>
+            <div class="member-cell__identity">
+              <span class="member-cell__name">{{ member.firstName }} {{ member.lastName }}</span>
+              <span class="member-cell__email">{{ member.email }}</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let member">
+          @if (member.id !== currentUserId()) {
+            <button
+              mat-button
+              color="warn"
+              [disabled]="removingMemberId() === member.id"
+              (click)="onRemoveMember(member)"
+            >
+              Remove
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
+
+    @if (members().length === 0) {
+      <p>No members yet.</p>
+    }
   }
 </section>

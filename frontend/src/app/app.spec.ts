@@ -11,7 +11,14 @@ describe('App', () => {
       imports: [App],
       providers: [
         provideRouter([]),
-        { provide: Keycloak, useValue: { realmAccess: { roles: [] } } },
+        {
+          provide: Keycloak,
+          useValue: {
+            realmAccess: { roles: [] },
+            tokenParsed: { name: 'Test User', email: 'test@example.com' },
+            logout: () => Promise.resolve(),
+          },
+        },
         { provide: KEYCLOAK_EVENT_SIGNAL, useValue: signal({ type: 'Ready', args: undefined }) },
       ],
     }).compileComponents();

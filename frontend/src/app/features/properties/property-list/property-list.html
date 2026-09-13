@@ -1,34 +1,41 @@
-<section class="property-list">
+<section class="property-grid">
   <h1>Properties</h1>
 
-  @if (loading()) {
-    <p>Loading properties…</p>
-  } @else if (errorMessage(); as message) {
-    <p class="error">{{ message }}</p>
+  @if (errorMessage(); as message) {
+    <p class="property-grid__error">{{ message }}</p>
+  } @else if (loading()) {
+    <div class="property-grid__state">
+      <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+      <p>Loading properties…</p>
+    </div>
+  } @else if (properties().length === 0) {
+    <div class="property-grid__state">
+      <mat-icon fontIcon="home_work" class="property-grid__state-icon"></mat-icon>
+      <p>No properties yet.</p>
+      <p class="property-grid__state-hint">Properties you add will show up here.</p>
+    </div>
   } @else {
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Address</th>
-          <th>Type</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (property of properties(); track property.id) {
-          <tr>
-            <td>{{ property.name }}</td>
-            <td>{{ property.address }}</td>
-            <td>{{ property.type }}</td>
-            <td>{{ property.status }}</td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="4">No properties yet.</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <div class="property-grid__cards">
+      @for (property of properties(); track property.id) {
+        <mat-card appearance="outlined" class="property-card">
+          <mat-card-header>
+            <mat-card-title>{{ property.name }}</mat-card-title>
+            <mat-card-subtitle class="property-card__address">
+              <mat-icon fontIcon="location_on" class="property-card__address-icon"></mat-icon>
+              {{ property.address }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content class="property-card__meta">
+            <span class="property-card__type">
+              <mat-icon [fontIcon]="property.type | propertyTypeIcon"></mat-icon>
+              {{ property.type | propertyTypeLabel }}
+            </span>
+            <span class="property-card__status" [class]="property.status | propertyStatusClass">
+              {{ property.status | propertyStatusLabel }}
+            </span>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
   }
 </section>

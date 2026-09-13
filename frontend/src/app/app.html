@@ -1,16 +1,58 @@
-<header class="app-shell__header">
-  <nav class="app-shell__nav">
-    <a class="app-shell__link" routerLink="/properties" routerLinkActive="app-shell__link--active">
-      Properties
-    </a>
-    @if (isOrgAdmin()) {
-      <a class="app-shell__link" routerLink="/admin/members" routerLinkActive="app-shell__link--active">
-        Admin
-      </a>
-    }
-  </nav>
-</header>
+<mat-sidenav-container class="app-shell">
+  <mat-sidenav
+    class="app-shell__sidenav"
+    [mode]="sidenavMode()"
+    [opened]="sidenavOpened()"
+    (openedChange)="sidenavOpened.set($event)"
+  >
+    <div class="app-shell__brand">PropStack</div>
 
-<main class="app-shell__content">
-  <router-outlet></router-outlet>
-</main>
+    <mat-nav-list class="app-shell__nav">
+      <a
+        mat-list-item
+        routerLink="/properties"
+        routerLinkActive="app-shell__nav-item--active"
+        (click)="onNavLinkClick()"
+      >
+        <mat-icon matListItemIcon fontIcon="home_work"></mat-icon>
+        <span matListItemTitle>Properties</span>
+      </a>
+      @if (isOrgAdmin()) {
+        <a
+          mat-list-item
+          routerLink="/admin/members"
+          routerLinkActive="app-shell__nav-item--active"
+          (click)="onNavLinkClick()"
+        >
+          <mat-icon matListItemIcon fontIcon="group"></mat-icon>
+          <span matListItemTitle>Admin</span>
+        </a>
+      }
+    </mat-nav-list>
+
+    <div class="app-shell__account">
+      <div class="app-shell__account-identity">
+        <span class="app-shell__account-name">{{ displayName() }}</span>
+        <span class="app-shell__account-email">{{ email() }}</span>
+      </div>
+      <button mat-icon-button type="button" aria-label="Log out" (click)="onLogout()">
+        <mat-icon fontIcon="logout"></mat-icon>
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="app-shell__content">
+    @if (sidenavMode() === 'over' && !sidenavOpened()) {
+      <button
+        mat-icon-button
+        class="app-shell__menu-toggle"
+        type="button"
+        aria-label="Open menu"
+        (click)="sidenavOpened.set(true)"
+      >
+        <mat-icon fontIcon="menu"></mat-icon>
+      </button>
+    }
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

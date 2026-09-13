@@ -1,9 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { catchError, map, Observable, of, startWith } from 'rxjs';
 import { PropertyService } from '../../../core/services/property.service';
 import { Property } from '../../../core/models/property.model';
+import { PropertyStatusClassPipe } from '../../../shared/pipes/property-status-class.pipe';
+import { PropertyStatusLabelPipe } from '../../../shared/pipes/property-status-label.pipe';
+import { PropertyTypeIconPipe } from '../../../shared/pipes/property-type-icon.pipe';
+import { PropertyTypeLabelPipe } from '../../../shared/pipes/property-type-label.pipe';
 
 type PropertyListState =
   | { readonly status: 'loading' }
@@ -14,7 +21,15 @@ const LOADING_STATE: PropertyListState = { status: 'loading' };
 
 @Component({
   selector: 'app-property-list',
-  imports: [],
+  imports: [
+    MatCardModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    PropertyStatusLabelPipe,
+    PropertyStatusClassPipe,
+    PropertyTypeLabelPipe,
+    PropertyTypeIconPipe,
+  ],
   templateUrl: './property-list.html',
   styleUrl: './property-list.scss',
 })
