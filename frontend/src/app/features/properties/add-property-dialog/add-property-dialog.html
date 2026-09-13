@@ -20,6 +20,24 @@
       <input matInput #nameInput type="text" name="name" required />
     </mat-form-field>
 
+    <mat-form-field appearance="outline">
+      <mat-label>Type</mat-label>
+      <mat-select [value]="type()" (valueChange)="type.set($event)">
+        @for (option of typeOptions; track option[0]) {
+          <mat-option [value]="option[0]">{{ option[1].label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select [value]="status()" (valueChange)="status.set($event)">
+        @for (option of statusOptions; track option[0]) {
+          <mat-option [value]="option[0]">{{ option[1].label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
     <mat-expansion-panel
       class="add-property-dialog__address-panel"
       [expanded]="addressExpanded()"
@@ -56,24 +74,6 @@
         <input matInput #countryInput type="text" name="country" />
       </mat-form-field>
     </mat-expansion-panel>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Type</mat-label>
-      <mat-select [value]="type()" (valueChange)="type.set($event)">
-        @for (option of typeOptions; track option[0]) {
-          <mat-option [value]="option[0]">{{ option[1].label }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Status</mat-label>
-      <mat-select [value]="status()" (valueChange)="status.set($event)">
-        @for (option of statusOptions; track option[0]) {
-          <mat-option [value]="option[0]">{{ option[1].label }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
 
     @if (errorMessage(); as message) {
       <p class="error">{{ message }}</p>

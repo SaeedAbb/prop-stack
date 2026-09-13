@@ -78,7 +78,7 @@ export class PropertyList {
 
   protected onAddProperty(): void {
     this.dialog
-      .open(AddPropertyDialog)
+      .open(AddPropertyDialog, { maxWidth: '95vw', maxHeight: '90vh' })
       .afterClosed()
       .subscribe((created?: Property) => {
         if (created) {
