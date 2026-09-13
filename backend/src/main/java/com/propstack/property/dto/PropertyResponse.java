@@ -1,7 +1,7 @@
 package com.propstack.property.dto;
 
-import com.propstack.property.PropertyStatus;
-import com.propstack.property.PropertyType;
+import com.propstack.property.persistence.PropertyStatus;
+import com.propstack.property.persistence.PropertyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class PropertyResponse {
 
     private Long id;
     private String name;
-    private String address;
+    private AddressResponse address;
     private PropertyType type;
     private PropertyStatus status;
     private String organizationId;

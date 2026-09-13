@@ -1,5 +1,6 @@
-package com.propstack.organization;
+package com.propstack.organization.service;
 
+import com.propstack.organization.exception.MissingOrganizationClaimException;
 import java.util.List;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;

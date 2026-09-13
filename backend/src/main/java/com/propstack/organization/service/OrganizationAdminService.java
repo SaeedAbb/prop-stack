@@ -1,7 +1,11 @@
-package com.propstack.organization;
+package com.propstack.organization.service;
 
+import com.propstack.organization.client.KeycloakAdminClient;
+import com.propstack.organization.client.KeycloakUserSummary;
 import com.propstack.organization.dto.AddOrganizationMemberRequest;
 import com.propstack.organization.dto.OrganizationMemberResponse;
+import com.propstack.organization.exception.NewMemberNameRequiredException;
+import com.propstack.organization.exception.SelfRemovalNotAllowedException;
 import java.util.List;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;

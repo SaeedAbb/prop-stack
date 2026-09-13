@@ -1,7 +1,8 @@
-package com.propstack.organization;
+package com.propstack.organization.web;
 
 import com.propstack.organization.dto.AddOrganizationMemberRequest;
 import com.propstack.organization.dto.OrganizationMemberResponse;
+import com.propstack.organization.service.OrganizationAdminService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;

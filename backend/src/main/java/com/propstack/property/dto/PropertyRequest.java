@@ -1,7 +1,8 @@
 package com.propstack.property.dto;
 
-import com.propstack.property.PropertyStatus;
-import com.propstack.property.PropertyType;
+import com.propstack.property.persistence.PropertyStatus;
+import com.propstack.property.persistence.PropertyType;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,8 +21,9 @@ public class PropertyRequest {
     @NotBlank
     private String name;
 
-    @NotBlank
-    private String address;
+    @NotNull
+    @Valid
+    private AddressRequest address;
 
     @NotNull
     private PropertyType type;

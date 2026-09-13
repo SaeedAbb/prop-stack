@@ -1,4 +1,4 @@
-package com.propstack.property;
+package com.propstack.property.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

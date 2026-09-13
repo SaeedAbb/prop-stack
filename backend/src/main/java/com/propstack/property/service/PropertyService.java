@@ -1,8 +1,11 @@
-package com.propstack.property;
+package com.propstack.property.service;
 
-import com.propstack.organization.CurrentOrganizationResolver;
+import com.propstack.organization.service.CurrentOrganizationResolver;
 import com.propstack.property.dto.PropertyRequest;
 import com.propstack.property.dto.PropertyResponse;
+import com.propstack.property.exception.PropertyNotFoundException;
+import com.propstack.property.persistence.Property;
+import com.propstack.property.persistence.PropertyRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

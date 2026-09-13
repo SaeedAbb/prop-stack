@@ -1,4 +1,4 @@
-package com.propstack.organization;
+package com.propstack.organization.client;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

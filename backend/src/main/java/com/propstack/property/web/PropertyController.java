@@ -1,7 +1,8 @@
-package com.propstack.property;
+package com.propstack.property.web;
 
 import com.propstack.property.dto.PropertyRequest;
 import com.propstack.property.dto.PropertyResponse;
+import com.propstack.property.service.PropertyService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;

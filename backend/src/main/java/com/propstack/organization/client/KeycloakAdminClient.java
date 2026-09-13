@@ -1,5 +1,6 @@
-package com.propstack.organization;
+package com.propstack.organization.client;
 
+import com.propstack.organization.exception.KeycloakAdminApiException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

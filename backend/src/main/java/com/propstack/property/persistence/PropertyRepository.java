@@ -1,4 +1,4 @@
-package com.propstack.property;
+package com.propstack.property.persistence;
 
 import java.util.List;
 import java.util.Optional;

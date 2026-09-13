@@ -1,6 +1,7 @@
-package com.propstack.organization;
+package com.propstack.organization.client;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.propstack.organization.exception.KeycloakAdminApiException;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;

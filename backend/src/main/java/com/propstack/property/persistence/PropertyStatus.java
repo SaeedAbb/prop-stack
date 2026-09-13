@@ -1,4 +1,4 @@
-package com.propstack.property;
+package com.propstack.property.persistence;
 
 public enum PropertyStatus {
     AVAILABLE,
