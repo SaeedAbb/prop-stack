@@ -313,11 +313,30 @@ Before every commit and push:
 These checks run in CI too (`backend-test`, `frontend-test` jobs) — running them locally first
 avoids pipeline failures.
 
+### Commit Conventions
+
+Every commit message follows [Conventional Commits](https://www.conventionalcommits.org/):
+`<type>(<optional scope>): <description>`, e.g. `feat(property): add address sub-package`,
+`fix(organization): handle missing organization claim`, `refactor: split property/organization
+packages by concept`. Common types:
+
+- `feat` — a new feature or capability
+- `fix` — a bug fix
+- `refactor` — restructuring code with no behavior change (e.g. the concept/layer package split)
+- `test` — adding or correcting tests only
+- `docs` — documentation only (`CLAUDE.md`, `README.md`, etc.)
+- `chore` — tooling/dependency/build changes with no source-code behavior change
+- `ci` — changes to `.github/workflows/ci-cd.yml`
+
+Use the scope to name the affected bounded context/concept when it's a single one (`property`,
+`property/address`, `organization`, `organization/keycloak`, `frontend`) — omit it for
+repo-wide changes. This applies to every commit, not just the first on a feature branch.
+
 ### Code Quality
 
 - Follow the established backend/frontend conventions above consistently across every feature,
   not just the first one.
-- Meaningful commit messages; keep methods small and focused.
+- Commit messages follow the Commit Conventions above; keep methods small and focused.
 - Comments only where the *why* isn't obvious from the code itself (a non-obvious constraint, a
   workaround, a subtle invariant) — not restating what the code already says.
 
