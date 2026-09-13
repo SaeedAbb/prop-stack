@@ -1,0 +1,112 @@
+{
+  "realm": "PropStack",
+  "enabled": true,
+  "organizationsEnabled": true,
+  "adminPermissionsEnabled": true,
+  "smtpServer": {
+    "host": "mailpit",
+    "port": "1025",
+    "from": "noreply@propstack.test",
+    "fromDisplayName": "PropStack (dev)",
+    "auth": "false",
+    "ssl": "false",
+    "starttls": "false"
+  },
+  "clients": [
+    {
+      "clientId": "propstack-frontend",
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:4200/*"],
+      "webOrigins": ["http://localhost:4200"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "basic", "email", "organization"],
+      "optionalClientScopes": ["address", "phone", "offline_access", "microprofile-jwt"]
+    },
+    {
+      "clientId": "propstack-backend",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "secret": "dev-only-propstack-backend-secret"
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "org-admin",
+        "description": "Held by a user who administers their own organization's membership via PropStack's own Admin section (see /api/organization/members) - not via Keycloak's console."
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "example-member",
+      "email": "example-member@example-org.propstack.test",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Example",
+      "lastName": "Member",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "example-password",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "example-admin",
+      "email": "example-admin@example-org.propstack.test",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Example",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "example-password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["org-admin"]
+    },
+    {
+      "username": "service-account-propstack-backend",
+      "enabled": true,
+      "serviceAccountClientId": "propstack-backend",
+      "clientRoles": {
+        "realm-management": ["realm-admin"]
+      }
+    }
+  ],
+  "organizations": [
+    {
+      "name": "example-org",
+      "alias": "example-org",
+      "enabled": true,
+      "domains": [
+        {
+          "name": "example-org.propstack.test",
+          "verified": false
+        }
+      ],
+      "members": [
+        {
+          "username": "example-member",
+          "membershipType": "UNMANAGED"
+        },
+        {
+          "username": "example-admin",
+          "membershipType": "UNMANAGED"
+        }
+      ]
+    }
+  ]
+}

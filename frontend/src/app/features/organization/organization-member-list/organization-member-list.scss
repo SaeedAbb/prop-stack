@@ -1,0 +1,26 @@
+.organization-member-list {
+  padding: 1.5rem;
+
+  &__add-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .error {
+    color: #b91c1c;
+  }
+}

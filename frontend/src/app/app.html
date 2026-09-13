@@ -1,0 +1,16 @@
+<header class="app-shell__header">
+  <nav class="app-shell__nav">
+    <a class="app-shell__link" routerLink="/properties" routerLinkActive="app-shell__link--active">
+      Properties
+    </a>
+    @if (isOrgAdmin()) {
+      <a class="app-shell__link" routerLink="/admin/members" routerLinkActive="app-shell__link--active">
+        Admin
+      </a>
+    }
+  </nav>
+</header>
+
+<main class="app-shell__content">
+  <router-outlet></router-outlet>
+</main>

@@ -1,0 +1,89 @@
+name: propstack
+
+# Single entrypoint for all of PropStack's infrastructure: the app's own Postgres,
+# Keycloak's Postgres, and Keycloak itself. Run `docker compose up -d` once at the
+# repo root, then start the backend (./mvnw spring-boot:run) and frontend (npm start)
+# as usual. Any future infra service (cache, mail-catcher, etc.) belongs in this file too.
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: propstack
+      POSTGRES_USER: propstack
+      POSTGRES_PASSWORD: propstack
+    ports:
+      - '5432:5432'
+    volumes:
+      - propstack-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U propstack -d propstack']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  keycloak-postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    ports:
+      - '5433:5432'
+    volumes:
+      - propstack-keycloak-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U keycloak -d keycloak']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '8025:8025' # web UI - view caught emails at http://localhost:8025
+      - '1025:1025' # SMTP
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.3
+    command: start-dev --import-realm --features=admin-fine-grained-authz:v2
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: 'true'
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HTTP_ENABLED: 'true'
+    volumes:
+      - ./keycloak/realm-export:/opt/keycloak/data/import
+    ports:
+      - '8081:8080'
+      - '9000:9000'
+    depends_on:
+      keycloak-postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    healthcheck:
+      # The Keycloak image has no curl/wget; health is exposed on the management port (9000).
+      test:
+        - CMD-SHELL
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/9000 &&
+          echo -e 'GET /health/ready HTTP/1.1\r\nhost: localhost\r\nConnection: close\r\n\r\n' >&3 &&
+          cat <&3 | grep -q '"status": "UP"'
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+volumes:
+  propstack-postgres-data:
+  propstack-keycloak-postgres-data:
