@@ -3,6 +3,7 @@ package com.propstack;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+// TEST COMMIT for /release verification - safe to remove after testing.
 @SpringBootApplication
 public class PropstackBackendApplication {
 
