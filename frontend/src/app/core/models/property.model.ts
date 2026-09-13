@@ -5,10 +5,11 @@ export type PropertyStatus = 'AVAILABLE' | 'RENTED' | 'UNDER_MAINTENANCE' | 'SOL
 export interface Address {
   id?: number;
   street: string;
+  houseNumber: string;
   city: string;
-  state?: string;
-  postalCode?: string;
-  country?: string;
+  state: string;
+  postalCode: string;
+  country: string;
 }
 
 export interface Property {

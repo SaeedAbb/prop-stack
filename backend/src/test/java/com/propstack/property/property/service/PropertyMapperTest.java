@@ -27,7 +27,14 @@ class PropertyMapperTest {
     void toEntity_mapsAllFieldsIncludingNestedAddress() {
         PropertyRequest request = PropertyRequest.builder()
                 .name("Skyline Tower")
-                .address(AddressRequest.builder().street("500 Harbor Blvd").city("Baytown").build())
+                .address(AddressRequest.builder()
+                        .street("Harbor Blvd")
+                        .houseNumber("500")
+                        .city("Baytown")
+                        .state("CA")
+                        .postalCode("94001")
+                        .country("USA")
+                        .build())
                 .type(PropertyType.BUILDING)
                 .status(PropertyStatus.AVAILABLE)
                 .build();
@@ -37,13 +44,14 @@ class PropertyMapperTest {
         assertThat(entity.getName()).isEqualTo("Skyline Tower");
         assertThat(entity.getType()).isEqualTo(PropertyType.BUILDING);
         assertThat(entity.getStatus()).isEqualTo(PropertyStatus.AVAILABLE);
-        assertThat(entity.getAddress().getStreet()).isEqualTo("500 Harbor Blvd");
+        assertThat(entity.getAddress().getStreet()).isEqualTo("Harbor Blvd");
+        assertThat(entity.getAddress().getHouseNumber()).isEqualTo("500");
         assertThat(entity.getAddress().getCity()).isEqualTo("Baytown");
     }
 
     @Test
     void toResponse_mapsAllFieldsIncludingNestedAddress() {
-        Address address = new Address(1L, "9 Market Sq", "Metropolis", "NY", "10001", "USA");
+        Address address = new Address(1L, "Market Sq", "9", "Metropolis", "NY", "10001", "USA");
         Property entity = new Property(4L, "Downtown Plaza", address, PropertyType.COMMERCIAL, PropertyStatus.UNDER_MAINTENANCE, "example-org");
 
         PropertyResponse response = propertyMapper.toResponse(entity);
@@ -51,18 +59,26 @@ class PropertyMapperTest {
         assertThat(response.getId()).isEqualTo(4L);
         assertThat(response.getName()).isEqualTo("Downtown Plaza");
         assertThat(response.getOrganizationId()).isEqualTo("example-org");
-        assertThat(response.getAddress().getStreet()).isEqualTo("9 Market Sq");
+        assertThat(response.getAddress().getStreet()).isEqualTo("Market Sq");
+        assertThat(response.getAddress().getHouseNumber()).isEqualTo("9");
         assertThat(response.getAddress().getCountry()).isEqualTo("USA");
     }
 
     @Test
     void updateEntityFromRequest_updatesNestedAddressInPlace_ratherThanReplacingIt() {
-        Address existingAddress = new Address(10L, "Old Street", "Old City", null, null, null);
+        Address existingAddress = new Address(10L, "Old Street", "1", "Old City", "Old State", "00000", "Old Country");
         Property existing = new Property(2L, "Old Name", existingAddress, PropertyType.HOUSE, PropertyStatus.RENTED, "example-org");
 
         PropertyRequest request = PropertyRequest.builder()
                 .name("New Name")
-                .address(AddressRequest.builder().street("New Street").city("New City").build())
+                .address(AddressRequest.builder()
+                        .street("New Street")
+                        .houseNumber("2")
+                        .city("New City")
+                        .state("New State")
+                        .postalCode("11111")
+                        .country("New Country")
+                        .build())
                 .type(PropertyType.APARTMENT)
                 .status(PropertyStatus.SOLD)
                 .build();

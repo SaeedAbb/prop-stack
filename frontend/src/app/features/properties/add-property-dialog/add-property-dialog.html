@@ -7,6 +7,7 @@
       $event,
       nameInput.value,
       streetInput.value,
+      houseNumberInput.value,
       cityInput.value,
       stateInput.value,
       postalCodeInput.value,
@@ -46,12 +47,17 @@
     >
       <mat-expansion-panel-header>
         <mat-panel-title>Address</mat-panel-title>
-        <mat-panel-description>Street and city are required</mat-panel-description>
+        <mat-panel-description>All fields are required</mat-panel-description>
       </mat-expansion-panel-header>
 
       <mat-form-field appearance="outline">
         <mat-label>Street</mat-label>
         <input matInput #streetInput type="text" name="street" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>House number</mat-label>
+        <input matInput #houseNumberInput type="text" name="houseNumber" required />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -61,17 +67,17 @@
 
       <mat-form-field appearance="outline">
         <mat-label>State</mat-label>
-        <input matInput #stateInput type="text" name="state" />
+        <input matInput #stateInput type="text" name="state" required />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Postal code</mat-label>
-        <input matInput #postalCodeInput type="text" name="postalCode" />
+        <input matInput #postalCodeInput type="text" name="postalCode" required />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Country</mat-label>
-        <input matInput #countryInput type="text" name="country" />
+        <input matInput #countryInput type="text" name="country" required />
       </mat-form-field>
     </mat-expansion-panel>
 

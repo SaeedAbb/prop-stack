@@ -73,14 +73,14 @@ class PropertyControllerTest {
     void create_returnsCreatedWithLocationHeader() throws Exception {
         PropertyRequest request = PropertyRequest.builder()
                 .name("Skyline Tower")
-                .address(AddressRequest.builder().street("500 Harbor Blvd").city("Baytown").build())
+                .address(validAddressRequest())
                 .type(PropertyType.BUILDING)
                 .status(PropertyStatus.AVAILABLE)
                 .build();
         PropertyResponse response = PropertyResponse.builder()
                 .id(9L)
                 .name("Skyline Tower")
-                .address(AddressResponse.builder().street("500 Harbor Blvd").city("Baytown").build())
+                .address(AddressResponse.builder().street("Harbor Blvd").houseNumber("500").city("Baytown").build())
                 .type(PropertyType.BUILDING)
                 .status(PropertyStatus.AVAILABLE)
                 .build();
@@ -97,7 +97,7 @@ class PropertyControllerTest {
     @Test
     void create_returnsBadRequest_whenNameMissing() throws Exception {
         PropertyRequest invalidRequest = PropertyRequest.builder()
-                .address(AddressRequest.builder().street("500 Harbor Blvd").city("Baytown").build())
+                .address(validAddressRequest())
                 .type(PropertyType.BUILDING)
                 .status(PropertyStatus.AVAILABLE)
                 .build();
@@ -123,10 +123,31 @@ class PropertyControllerTest {
     }
 
     @Test
+    void create_returnsBadRequest_whenHouseNumberMissing() throws Exception {
+        PropertyRequest invalidRequest = PropertyRequest.builder()
+                .name("Skyline Tower")
+                .address(AddressRequest.builder()
+                        .street("Harbor Blvd")
+                        .city("Baytown")
+                        .state("CA")
+                        .postalCode("94001")
+                        .country("USA")
+                        .build())
+                .type(PropertyType.BUILDING)
+                .status(PropertyStatus.AVAILABLE)
+                .build();
+
+        mockMvc.perform(post("/api/properties")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void update_returnsOkWithUpdatedProperty() throws Exception {
         PropertyRequest request = PropertyRequest.builder()
                 .name("Renamed")
-                .address(AddressRequest.builder().street("1 Main St").city("Springfield").build())
+                .address(validAddressRequest())
                 .type(PropertyType.HOUSE)
                 .status(PropertyStatus.SOLD)
                 .build();
@@ -146,5 +167,16 @@ class PropertyControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(propertyService).delete(3L);
+    }
+
+    private static AddressRequest validAddressRequest() {
+        return AddressRequest.builder()
+                .street("Harbor Blvd")
+                .houseNumber("500")
+                .city("Baytown")
+                .state("CA")
+                .postalCode("94001")
+                .country("USA")
+                .build();
     }
 }

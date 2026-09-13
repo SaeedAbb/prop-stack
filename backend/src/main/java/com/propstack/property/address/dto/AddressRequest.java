@@ -18,9 +18,17 @@ public class AddressRequest {
     private String street;
 
     @NotBlank
+    private String houseNumber;
+
+    @NotBlank
     private String city;
 
+    @NotBlank
     private String state;
+
+    @NotBlank
     private String postalCode;
+
+    @NotBlank
     private String country;
 }

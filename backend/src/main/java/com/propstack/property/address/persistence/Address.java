@@ -26,12 +26,19 @@ public class Address {
     private String street;
 
     @NotBlank
+    @Column(name = "house_number")
+    private String houseNumber;
+
+    @NotBlank
     private String city;
 
+    @NotBlank
     private String state;
 
+    @NotBlank
     @Column(name = "postal_code")
     private String postalCode;
 
+    @NotBlank
     private String country;
 }

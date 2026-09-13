@@ -41,6 +41,7 @@ export class AddPropertyDialog {
     event: SubmitEvent,
     name: string,
     street: string,
+    houseNumber: string,
     city: string,
     state: string,
     postalCode: string,
@@ -50,12 +51,26 @@ export class AddPropertyDialog {
 
     const trimmedName = name.trim();
     const trimmedStreet = street.trim();
+    const trimmedHouseNumber = houseNumber.trim();
     const trimmedCity = city.trim();
+    const trimmedState = state.trim();
+    const trimmedPostalCode = postalCode.trim();
+    const trimmedCountry = country.trim();
     const selectedType = this.type();
     const selectedStatus = this.status();
 
-    if (!trimmedName || !trimmedStreet || !trimmedCity || !selectedType || !selectedStatus) {
-      this.errorMessage.set('Please fill in name, street, city, type and status.');
+    if (
+      !trimmedName ||
+      !trimmedStreet ||
+      !trimmedHouseNumber ||
+      !trimmedCity ||
+      !trimmedState ||
+      !trimmedPostalCode ||
+      !trimmedCountry ||
+      !selectedType ||
+      !selectedStatus
+    ) {
+      this.errorMessage.set('Please fill in name, address, type and status.');
       this.addressExpanded.set(true);
       return;
     }
@@ -67,10 +82,11 @@ export class AddPropertyDialog {
       name: trimmedName,
       address: {
         street: trimmedStreet,
+        houseNumber: trimmedHouseNumber,
         city: trimmedCity,
-        state: state.trim() || undefined,
-        postalCode: postalCode.trim() || undefined,
-        country: country.trim() || undefined,
+        state: trimmedState,
+        postalCode: trimmedPostalCode,
+        country: trimmedCountry,
       },
       type: selectedType,
       status: selectedStatus,

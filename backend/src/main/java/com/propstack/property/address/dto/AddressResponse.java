@@ -15,6 +15,7 @@ public class AddressResponse {
 
     private Long id;
     private String street;
+    private String houseNumber;
     private String city;
     private String state;
     private String postalCode;
