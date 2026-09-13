@@ -1,6 +1,9 @@
 # PropStack
 
-Property management application.
+[![CI/CD Pipeline](https://github.com/SaeedAbb/prop-stack/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/SaeedAbb/prop-stack/actions/workflows/ci-cd.yml)
+
+A multi-tenant property management application: Spring Boot backend, Angular frontend, and
+Keycloak-backed authentication with per-organization data isolation.
 
 - `backend/` — Spring Boot 4.1.1 (Java 26, Maven), Flyway-managed schema
 - `frontend/` — Angular 22 (standalone components, SCSS)
@@ -60,3 +63,21 @@ App available at `http://localhost:4200`, calling the backend at `http://localho
 
 > Note: `npm install` currently needs `--legacy-peer-deps` due to an npm/arborist bug
 > with the newest Angular 22 toolchain's peer dependency graph.
+
+## Contributing
+
+See [`CLAUDE.md`](CLAUDE.md) for the full architecture/conventions reference (backend package
+structure, frontend conventions, testing, deployment). In short, before opening a PR:
+
+- Backend changes: `cd backend && ./mvnw test` (requires the infra above running — see
+  `CLAUDE.md` → Database Management)
+- Frontend changes: `cd frontend && npm run lint && npm run test:ci`
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
+  (`feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `ci` — see `CLAUDE.md` → Commit Conventions)
+
+These same checks run in CI (`.github/workflows/ci-cd.yml`) on every push/PR to `main`.
+
+## License
+
+Proprietary. All rights reserved — no license is granted for use, modification, or distribution
+without explicit permission.
