@@ -13,6 +13,10 @@ export class PropertyService {
     return this.http.get<Property[]>(this.baseUrl);
   }
 
+  getAllDeleted(): Observable<Property[]> {
+    return this.http.get<Property[]>(`${this.baseUrl}/deleted`);
+  }
+
   getById(id: number): Observable<Property> {
     return this.http.get<Property>(`${this.baseUrl}/${id}`);
   }
@@ -27,5 +31,9 @@ export class PropertyService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  restore(id: number): Observable<Property> {
+    return this.http.post<Property>(`${this.baseUrl}/${id}/restore`, {});
   }
 }

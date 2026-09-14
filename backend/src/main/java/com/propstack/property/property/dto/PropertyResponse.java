@@ -3,6 +3,7 @@ package com.propstack.property.property.dto;
 import com.propstack.property.address.dto.AddressResponse;
 import com.propstack.property.property.persistence.PropertyStatus;
 import com.propstack.property.property.persistence.PropertyType;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,4 +23,5 @@ public class PropertyResponse {
     private PropertyType type;
     private PropertyStatus status;
     private String organizationId;
+    private Instant deletedAt;
 }

@@ -32,6 +32,11 @@ public class PropertyController {
         return propertyService.findAll();
     }
 
+    @GetMapping("/deleted")
+    public List<PropertyResponse> findAllDeleted() {
+        return propertyService.findAllDeleted();
+    }
+
     @GetMapping("/{id}")
     public PropertyResponse findById(@PathVariable Long id) {
         return propertyService.findById(id);
@@ -56,5 +61,10 @@ public class PropertyController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         propertyService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/restore")
+    public PropertyResponse restore(@PathVariable Long id) {
+        return propertyService.restore(id);
     }
 }

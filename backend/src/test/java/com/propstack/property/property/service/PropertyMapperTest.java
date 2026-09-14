@@ -52,7 +52,7 @@ class PropertyMapperTest {
     @Test
     void toResponse_mapsAllFieldsIncludingNestedAddress() {
         Address address = new Address(1L, "Market Sq", "9", "Metropolis", "NY", "10001", "USA");
-        Property entity = new Property(4L, "Downtown Plaza", address, PropertyType.COMMERCIAL, PropertyStatus.UNDER_MAINTENANCE, "example-org");
+        Property entity = new Property(4L, "Downtown Plaza", address, PropertyType.COMMERCIAL, PropertyStatus.UNDER_MAINTENANCE, "example-org", null);
 
         PropertyResponse response = propertyMapper.toResponse(entity);
 
@@ -67,7 +67,7 @@ class PropertyMapperTest {
     @Test
     void updateEntityFromRequest_updatesNestedAddressInPlace_ratherThanReplacingIt() {
         Address existingAddress = new Address(10L, "Old Street", "1", "Old City", "Old State", "00000", "Old Country");
-        Property existing = new Property(2L, "Old Name", existingAddress, PropertyType.HOUSE, PropertyStatus.RENTED, "example-org");
+        Property existing = new Property(2L, "Old Name", existingAddress, PropertyType.HOUSE, PropertyStatus.RENTED, "example-org", null);
 
         PropertyRequest request = PropertyRequest.builder()
                 .name("New Name")

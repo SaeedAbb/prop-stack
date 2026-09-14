@@ -6,6 +6,7 @@ import com.propstack.property.property.dto.PropertyResponse;
 import com.propstack.property.property.exception.PropertyNotFoundException;
 import com.propstack.property.property.persistence.Property;
 import com.propstack.property.property.persistence.PropertyRepository;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,15 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public List<PropertyResponse> findAll() {
         String organizationId = currentOrganizationResolver.requireCurrentOrganizationId();
-        return propertyRepository.findAllByOrganizationId(organizationId).stream()
+        return propertyRepository.findAllByOrganizationIdAndDeletedAtIsNull(organizationId).stream()
+                .map(propertyMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PropertyResponse> findAllDeleted() {
+        String organizationId = currentOrganizationResolver.requireCurrentOrganizationId();
+        return propertyRepository.findAllByOrganizationIdAndDeletedAtIsNotNull(organizationId).stream()
                 .map(propertyMapper::toResponse)
                 .toList();
     }
@@ -57,14 +66,22 @@ public class PropertyService {
 
     public void delete(Long id) {
         String organizationId = currentOrganizationResolver.requireCurrentOrganizationId();
-        if (!propertyRepository.existsByIdAndOrganizationId(id, organizationId)) {
-            throw new PropertyNotFoundException(id);
-        }
-        propertyRepository.deleteByIdAndOrganizationId(id, organizationId);
+        Property existing = getOrThrow(id, organizationId);
+        existing.setDeletedAt(Instant.now());
+        propertyRepository.save(existing);
+    }
+
+    public PropertyResponse restore(Long id) {
+        String organizationId = currentOrganizationResolver.requireCurrentOrganizationId();
+        Property existing = propertyRepository
+                .findByIdAndOrganizationIdAndDeletedAtIsNotNull(id, organizationId)
+                .orElseThrow(() -> new PropertyNotFoundException(id));
+        existing.setDeletedAt(null);
+        return propertyMapper.toResponse(propertyRepository.save(existing));
     }
 
     private Property getOrThrow(Long id, String organizationId) {
-        return propertyRepository.findByIdAndOrganizationId(id, organizationId)
+        return propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNull(id, organizationId)
                 .orElseThrow(() -> new PropertyNotFoundException(id));
     }
 }

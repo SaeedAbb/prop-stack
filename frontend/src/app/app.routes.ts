@@ -4,7 +4,9 @@ import { OrganizationMemberList } from './features/organization/organization-mem
 import { PropertyList } from './features/properties/property-list/property-list';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'properties', pathMatch: 'full' },
-  { path: 'properties', component: PropertyList },
+  { path: '', redirectTo: 'properties/owned', pathMatch: 'full' },
+  { path: 'properties', redirectTo: 'properties/owned', pathMatch: 'full' },
+  { path: 'properties/owned', component: PropertyList, data: { mode: 'owned' } },
+  { path: 'properties/deleted', component: PropertyList, data: { mode: 'deleted' } },
   { path: 'admin/members', component: OrganizationMemberList, canActivate: [orgAdminGuard] },
 ];

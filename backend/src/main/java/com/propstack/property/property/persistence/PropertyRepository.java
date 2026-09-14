@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
-    List<Property> findAllByOrganizationId(String organizationId);
+    List<Property> findAllByOrganizationIdAndDeletedAtIsNull(String organizationId);
 
-    Optional<Property> findByIdAndOrganizationId(Long id, String organizationId);
+    List<Property> findAllByOrganizationIdAndDeletedAtIsNotNull(String organizationId);
 
-    boolean existsByIdAndOrganizationId(Long id, String organizationId);
+    Optional<Property> findByIdAndOrganizationIdAndDeletedAtIsNull(Long id, String organizationId);
 
-    void deleteByIdAndOrganizationId(Long id, String organizationId);
+    Optional<Property> findByIdAndOrganizationIdAndDeletedAtIsNotNull(Long id, String organizationId);
 }

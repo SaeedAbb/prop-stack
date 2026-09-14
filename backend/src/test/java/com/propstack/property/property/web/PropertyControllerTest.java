@@ -62,6 +62,17 @@ class PropertyControllerTest {
     }
 
     @Test
+    void findAllDeleted_returnsOkWithPropertyList() throws Exception {
+        PropertyResponse response = PropertyResponse.builder().id(2L).name("Old Warehouse").build();
+        when(propertyService.findAllDeleted()).thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/properties/deleted"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name").value("Old Warehouse"));
+    }
+
+    @Test
     void findById_returnsNotFound_whenServiceThrows() throws Exception {
         when(propertyService.findById(404L)).thenThrow(new PropertyNotFoundException(404L));
 
@@ -167,6 +178,24 @@ class PropertyControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(propertyService).delete(3L);
+    }
+
+    @Test
+    void restore_returnsOkWithRestoredProperty() throws Exception {
+        PropertyResponse response = PropertyResponse.builder().id(4L).name("Old Warehouse").build();
+        when(propertyService.restore(4L)).thenReturn(response);
+
+        mockMvc.perform(post("/api/properties/4/restore"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Old Warehouse"));
+    }
+
+    @Test
+    void restore_returnsNotFound_whenServiceThrows() throws Exception {
+        when(propertyService.restore(404L)).thenThrow(new PropertyNotFoundException(404L));
+
+        mockMvc.perform(post("/api/properties/404/restore"))
+                .andExpect(status().isNotFound());
     }
 
     private static AddressRequest validAddressRequest() {

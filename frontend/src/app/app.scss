@@ -29,6 +29,25 @@
     color: var(--mat-sys-on-secondary-container);
   }
 
+  &__nav-subheader {
+    padding: 0.5rem 1rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &__nav-group {
+    margin: 0 0.5rem 0.5rem 1.25rem;
+    padding-inline-start: 0.75rem;
+    border-inline-start: 2px solid var(--mat-sys-outline-variant);
+  }
+
+  &__nav-item--nested {
+    font-size: 0.875rem;
+  }
+
   &__account {
     display: flex;
     align-items: center;

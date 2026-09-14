@@ -14,6 +14,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,4 +50,7 @@ public class Property {
     @NotBlank
     @Column(name = "organization_id", nullable = false, updatable = false)
     private String organizationId;
+
+    /** Non-null when soft-deleted; null means the property is active ("Owned"). */
+    private Instant deletedAt;
 }

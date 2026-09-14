@@ -1,11 +1,20 @@
 <section class="property-grid">
   <div class="property-grid__header">
-    <h1>Properties</h1>
-    <button mat-flat-button type="button" (click)="onAddProperty()">
-      <mat-icon fontIcon="add"></mat-icon>
-      Add property
-    </button>
+    <h1>{{ mode === 'deleted' ? 'Deleted properties' : 'Owned properties' }}</h1>
+    @if (mode === 'owned') {
+      <button mat-flat-button type="button" (click)="onAddProperty()">
+        <mat-icon fontIcon="add"></mat-icon>
+        Add property
+      </button>
+    }
   </div>
+
+  @if (deleteErrorMessage(); as message) {
+    <p class="property-grid__error">{{ message }}</p>
+  }
+  @if (restoreErrorMessage(); as message) {
+    <p class="property-grid__error">{{ message }}</p>
+  }
 
   @if (errorMessage(); as message) {
     <p class="property-grid__error">{{ message }}</p>
@@ -17,8 +26,12 @@
   } @else if (properties().length === 0) {
     <div class="property-grid__state">
       <mat-icon fontIcon="home_work" class="property-grid__state-icon"></mat-icon>
-      <p>No properties yet.</p>
-      <p class="property-grid__state-hint">Properties you add will show up here.</p>
+      @if (mode === 'deleted') {
+        <p>No deleted properties.</p>
+      } @else {
+        <p>No properties yet.</p>
+        <p class="property-grid__state-hint">Properties you add will show up here.</p>
+      }
     </div>
   } @else {
     <div class="property-grid__cards">
@@ -40,6 +53,29 @@
               {{ property.status | propertyStatusLabel }}
             </span>
           </mat-card-content>
+          <mat-card-actions align="end">
+            @if (mode === 'owned') {
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="Delete property"
+                [disabled]="deletingPropertyId() === property.id"
+                (click)="onDeleteProperty(property)"
+              >
+                <mat-icon fontIcon="delete_outline"></mat-icon>
+              </button>
+            } @else {
+              <button
+                mat-icon-button
+                type="button"
+                aria-label="Restore property"
+                [disabled]="restoringPropertyId() === property.id"
+                (click)="onRestoreProperty(property)"
+              >
+                <mat-icon fontIcon="restore"></mat-icon>
+              </button>
+            }
+          </mat-card-actions>
         </mat-card>
       }
     </div>

@@ -13,11 +13,13 @@ import com.propstack.property.property.persistence.Property;
 import com.propstack.property.property.persistence.PropertyRepository;
 import com.propstack.property.property.persistence.PropertyStatus;
 import com.propstack.property.property.persistence.PropertyType;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -44,13 +46,25 @@ class PropertyServiceTest {
     }
 
     @Test
-    void findAll_returnsPropertiesScopedToCurrentOrganization() {
-        Property property = new Property(1L, "Sunset Apartments", null, PropertyType.APARTMENT, PropertyStatus.AVAILABLE, ORGANIZATION_ID);
+    void findAll_returnsActivePropertiesScopedToCurrentOrganization() {
+        Property property = new Property(1L, "Sunset Apartments", null, PropertyType.APARTMENT, PropertyStatus.AVAILABLE, ORGANIZATION_ID, null);
         PropertyResponse response = PropertyResponse.builder().id(1L).name("Sunset Apartments").build();
-        when(propertyRepository.findAllByOrganizationId(ORGANIZATION_ID)).thenReturn(List.of(property));
+        when(propertyRepository.findAllByOrganizationIdAndDeletedAtIsNull(ORGANIZATION_ID)).thenReturn(List.of(property));
         when(propertyMapper.toResponse(property)).thenReturn(response);
 
         List<PropertyResponse> result = propertyService.findAll();
+
+        assertThat(result).containsExactly(response);
+    }
+
+    @Test
+    void findAllDeleted_returnsSoftDeletedPropertiesScopedToCurrentOrganization() {
+        Property property = new Property(2L, "Old Warehouse", null, PropertyType.BUILDING, PropertyStatus.SOLD, ORGANIZATION_ID, Instant.now());
+        PropertyResponse response = PropertyResponse.builder().id(2L).name("Old Warehouse").build();
+        when(propertyRepository.findAllByOrganizationIdAndDeletedAtIsNotNull(ORGANIZATION_ID)).thenReturn(List.of(property));
+        when(propertyMapper.toResponse(property)).thenReturn(response);
+
+        List<PropertyResponse> result = propertyService.findAllDeleted();
 
         assertThat(result).containsExactly(response);
     }
@@ -60,7 +74,7 @@ class PropertyServiceTest {
         Property property = new Property();
         property.setId(5L);
         PropertyResponse response = PropertyResponse.builder().id(5L).build();
-        when(propertyRepository.findByIdAndOrganizationId(5L, ORGANIZATION_ID)).thenReturn(Optional.of(property));
+        when(propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNull(5L, ORGANIZATION_ID)).thenReturn(Optional.of(property));
         when(propertyMapper.toResponse(property)).thenReturn(response);
 
         PropertyResponse result = propertyService.findById(5L);
@@ -70,7 +84,7 @@ class PropertyServiceTest {
 
     @Test
     void findById_throwsNotFound_whenMissing() {
-        when(propertyRepository.findByIdAndOrganizationId(99L, ORGANIZATION_ID)).thenReturn(Optional.empty());
+        when(propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNull(99L, ORGANIZATION_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> propertyService.findById(99L))
                 .isInstanceOf(PropertyNotFoundException.class);
@@ -97,7 +111,7 @@ class PropertyServiceTest {
     @Test
     void update_throwsNotFound_whenMissing() {
         PropertyRequest request = PropertyRequest.builder().name("Updated").build();
-        when(propertyRepository.findByIdAndOrganizationId(7L, ORGANIZATION_ID)).thenReturn(Optional.empty());
+        when(propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNull(7L, ORGANIZATION_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> propertyService.update(7L, request))
                 .isInstanceOf(PropertyNotFoundException.class);
@@ -110,7 +124,7 @@ class PropertyServiceTest {
         existing.setId(7L);
         PropertyResponse response = PropertyResponse.builder().id(7L).name("Updated").build();
 
-        when(propertyRepository.findByIdAndOrganizationId(7L, ORGANIZATION_ID)).thenReturn(Optional.of(existing));
+        when(propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNull(7L, ORGANIZATION_ID)).thenReturn(Optional.of(existing));
         when(propertyRepository.save(existing)).thenReturn(existing);
         when(propertyMapper.toResponse(existing)).thenReturn(response);
 
@@ -122,18 +136,48 @@ class PropertyServiceTest {
 
     @Test
     void delete_throwsNotFound_whenMissing() {
-        when(propertyRepository.existsByIdAndOrganizationId(3L, ORGANIZATION_ID)).thenReturn(false);
+        when(propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNull(3L, ORGANIZATION_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> propertyService.delete(3L))
                 .isInstanceOf(PropertyNotFoundException.class);
     }
 
     @Test
-    void delete_removesProperty_whenFound() {
-        when(propertyRepository.existsByIdAndOrganizationId(3L, ORGANIZATION_ID)).thenReturn(true);
+    void delete_softDeletesProperty_setsDeletedAtAndSaves() {
+        Property existing = new Property();
+        existing.setId(3L);
+        when(propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNull(3L, ORGANIZATION_ID)).thenReturn(Optional.of(existing));
 
         propertyService.delete(3L);
 
-        verify(propertyRepository).deleteByIdAndOrganizationId(3L, ORGANIZATION_ID);
+        ArgumentCaptor<Property> captor = ArgumentCaptor.forClass(Property.class);
+        verify(propertyRepository).save(captor.capture());
+        assertThat(captor.getValue().getId()).isEqualTo(3L);
+        assertThat(captor.getValue().getDeletedAt()).isNotNull();
+    }
+
+    @Test
+    void restore_throwsNotFound_whenPropertyNotDeleted() {
+        when(propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNotNull(4L, ORGANIZATION_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> propertyService.restore(4L))
+                .isInstanceOf(PropertyNotFoundException.class);
+    }
+
+    @Test
+    void restore_clearsDeletedAt_andSaves() {
+        Property existing = new Property();
+        existing.setId(4L);
+        existing.setDeletedAt(Instant.now());
+        PropertyResponse response = PropertyResponse.builder().id(4L).build();
+
+        when(propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNotNull(4L, ORGANIZATION_ID)).thenReturn(Optional.of(existing));
+        when(propertyRepository.save(existing)).thenReturn(existing);
+        when(propertyMapper.toResponse(existing)).thenReturn(response);
+
+        PropertyResponse result = propertyService.restore(4L);
+
+        assertThat(existing.getDeletedAt()).isNull();
+        assertThat(result).isEqualTo(response);
     }
 }
