@@ -21,5 +21,6 @@ export const PROPERTY_TYPE_DISPLAY: Record<PropertyType, PropertyTypeDisplay> = 
   APARTMENT: { label: 'Apartment', icon: 'apartment' },
   HOUSE: { label: 'House', icon: 'home' },
   COMMERCIAL: { label: 'Commercial', icon: 'storefront' },
+  BUILDING: { label: 'Building', icon: 'domain' },
   LAND: { label: 'Land', icon: 'terrain' },
 };

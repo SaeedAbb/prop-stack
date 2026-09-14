@@ -1,0 +1,34 @@
+.add-property-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: min(28rem, 90vw);
+  max-height: 70vh;
+  overflow-y: auto;
+
+  // Every direct child keeps its natural size instead of shrinking to fit when this container
+  // is height-constrained (a short/narrow screen) - that's what makes the container itself
+  // overflow and scroll, rather than the address panel silently compressing to nothing.
+  > * {
+    flex-shrink: 0;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.add-property-dialog__address-panel {
+  margin-bottom: 0.5rem;
+
+  .mat-expansion-panel-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 0.25rem;
+  }
+}
+
+.error {
+  color: #b91c1c;
+}

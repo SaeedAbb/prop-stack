@@ -8,15 +8,27 @@
     <div class="app-shell__brand">PropStack</div>
 
     <mat-nav-list class="app-shell__nav">
-      <a
-        mat-list-item
-        routerLink="/properties"
-        routerLinkActive="app-shell__nav-item--active"
-        (click)="onNavLinkClick()"
-      >
-        <mat-icon matListItemIcon fontIcon="home_work"></mat-icon>
-        <span matListItemTitle>Properties</span>
-      </a>
+      <div matSubheader class="app-shell__nav-subheader">Property</div>
+      <div class="app-shell__nav-group">
+        <a
+          mat-list-item
+          class="app-shell__nav-item--nested"
+          routerLink="/properties/owned"
+          routerLinkActive="app-shell__nav-item--active"
+          (click)="onNavLinkClick()"
+        >
+          <span matListItemTitle>Owned</span>
+        </a>
+        <a
+          mat-list-item
+          class="app-shell__nav-item--nested"
+          routerLink="/properties/deleted"
+          routerLinkActive="app-shell__nav-item--active"
+          (click)="onNavLinkClick()"
+        >
+          <span matListItemTitle>Deleted</span>
+        </a>
+      </div>
       @if (isOrgAdmin()) {
         <a
           mat-list-item
