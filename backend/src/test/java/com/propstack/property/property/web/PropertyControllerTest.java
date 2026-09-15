@@ -23,6 +23,7 @@ import com.propstack.property.property.persistence.PropertyStatus;
 import com.propstack.property.property.persistence.PropertyType;
 import com.propstack.property.property.service.PropertyService;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.security.oauth2.server.resource.autoconfigure.web.OAuth2ResourceServerWebSecurityAutoConfiguration;
@@ -41,6 +42,13 @@ import tools.jackson.databind.ObjectMapper;
 @AutoConfigureMockMvc(addFilters = false)
 class PropertyControllerTest {
 
+    private static final UUID PROPERTY_ID_1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID PROPERTY_ID_2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
+    private static final UUID PROPERTY_ID_3 = UUID.fromString("00000000-0000-0000-0000-000000000003");
+    private static final UUID PROPERTY_ID_4 = UUID.fromString("00000000-0000-0000-0000-000000000004");
+    private static final UUID PROPERTY_ID_9 = UUID.fromString("00000000-0000-0000-0000-000000000009");
+    private static final UUID PROPERTY_ID_404 = UUID.fromString("00000000-0000-0000-0000-000000000404");
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -52,7 +60,7 @@ class PropertyControllerTest {
 
     @Test
     void findAll_returnsOkWithPropertyList() throws Exception {
-        PropertyResponse response = PropertyResponse.builder().id(1L).name("Sunset Apartments").build();
+        PropertyResponse response = PropertyResponse.builder().id(PROPERTY_ID_1).name("Sunset Apartments").build();
         when(propertyService.findAll()).thenReturn(List.of(response));
 
         mockMvc.perform(get("/api/properties"))
@@ -63,7 +71,7 @@ class PropertyControllerTest {
 
     @Test
     void findAllDeleted_returnsOkWithPropertyList() throws Exception {
-        PropertyResponse response = PropertyResponse.builder().id(2L).name("Old Warehouse").build();
+        PropertyResponse response = PropertyResponse.builder().id(PROPERTY_ID_2).name("Old Warehouse").build();
         when(propertyService.findAllDeleted()).thenReturn(List.of(response));
 
         mockMvc.perform(get("/api/properties/deleted"))
@@ -74,9 +82,9 @@ class PropertyControllerTest {
 
     @Test
     void findById_returnsNotFound_whenServiceThrows() throws Exception {
-        when(propertyService.findById(404L)).thenThrow(new PropertyNotFoundException(404L));
+        when(propertyService.findById(PROPERTY_ID_404)).thenThrow(new PropertyNotFoundException(PROPERTY_ID_404));
 
-        mockMvc.perform(get("/api/properties/404"))
+        mockMvc.perform(get("/api/properties/" + PROPERTY_ID_404))
                 .andExpect(status().isNotFound());
     }
 
@@ -89,7 +97,7 @@ class PropertyControllerTest {
                 .status(PropertyStatus.AVAILABLE)
                 .build();
         PropertyResponse response = PropertyResponse.builder()
-                .id(9L)
+                .id(PROPERTY_ID_9)
                 .name("Skyline Tower")
                 .address(AddressResponse.builder().street("Harbor Blvd").houseNumber("500").city("Baytown").build())
                 .type(PropertyType.BUILDING)
@@ -101,7 +109,7 @@ class PropertyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", containsString("/api/properties/9")))
+                .andExpect(header().string("Location", containsString("/api/properties/" + PROPERTY_ID_9)))
                 .andExpect(jsonPath("$.name").value("Skyline Tower"));
     }
 
@@ -162,10 +170,10 @@ class PropertyControllerTest {
                 .type(PropertyType.HOUSE)
                 .status(PropertyStatus.SOLD)
                 .build();
-        PropertyResponse response = PropertyResponse.builder().id(3L).name("Renamed").build();
-        when(propertyService.update(eq(3L), any(PropertyRequest.class))).thenReturn(response);
+        PropertyResponse response = PropertyResponse.builder().id(PROPERTY_ID_3).name("Renamed").build();
+        when(propertyService.update(eq(PROPERTY_ID_3), any(PropertyRequest.class))).thenReturn(response);
 
-        mockMvc.perform(put("/api/properties/3")
+        mockMvc.perform(put("/api/properties/" + PROPERTY_ID_3)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -174,27 +182,27 @@ class PropertyControllerTest {
 
     @Test
     void delete_returnsNoContent() throws Exception {
-        mockMvc.perform(delete("/api/properties/3"))
+        mockMvc.perform(delete("/api/properties/" + PROPERTY_ID_3))
                 .andExpect(status().isNoContent());
 
-        verify(propertyService).delete(3L);
+        verify(propertyService).delete(PROPERTY_ID_3);
     }
 
     @Test
     void restore_returnsOkWithRestoredProperty() throws Exception {
-        PropertyResponse response = PropertyResponse.builder().id(4L).name("Old Warehouse").build();
-        when(propertyService.restore(4L)).thenReturn(response);
+        PropertyResponse response = PropertyResponse.builder().id(PROPERTY_ID_4).name("Old Warehouse").build();
+        when(propertyService.restore(PROPERTY_ID_4)).thenReturn(response);
 
-        mockMvc.perform(post("/api/properties/4/restore"))
+        mockMvc.perform(post("/api/properties/" + PROPERTY_ID_4 + "/restore"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Old Warehouse"));
     }
 
     @Test
     void restore_returnsNotFound_whenServiceThrows() throws Exception {
-        when(propertyService.restore(404L)).thenThrow(new PropertyNotFoundException(404L));
+        when(propertyService.restore(PROPERTY_ID_404)).thenThrow(new PropertyNotFoundException(PROPERTY_ID_404));
 
-        mockMvc.perform(post("/api/properties/404/restore"))
+        mockMvc.perform(post("/api/properties/" + PROPERTY_ID_404 + "/restore"))
                 .andExpect(status().isNotFound());
     }
 

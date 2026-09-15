@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { orgAdminGuard } from './core/guards/org-admin.guard';
 import { OrganizationMemberList } from './features/organization/organization-member-list/organization-member-list';
+import { PropertyDetail } from './features/properties/property-detail/property-detail';
 import { PropertyList } from './features/properties/property-list/property-list';
 
 export const routes: Routes = [
@@ -8,5 +9,6 @@ export const routes: Routes = [
   { path: 'properties', redirectTo: 'properties/owned', pathMatch: 'full' },
   { path: 'properties/owned', component: PropertyList, data: { mode: 'owned' } },
   { path: 'properties/deleted', component: PropertyList, data: { mode: 'deleted' } },
+  { path: 'properties/:id', component: PropertyDetail },
   { path: 'admin/members', component: OrganizationMemberList, canActivate: [orgAdminGuard] },
 ];

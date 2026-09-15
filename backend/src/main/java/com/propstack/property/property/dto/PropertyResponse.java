@@ -4,6 +4,7 @@ import com.propstack.property.address.dto.AddressResponse;
 import com.propstack.property.property.persistence.PropertyStatus;
 import com.propstack.property.property.persistence.PropertyType;
 import java.time.Instant;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import lombok.Setter;
 @Builder
 public class PropertyResponse {
 
-    private Long id;
+    private UUID id;
     private String name;
     private AddressResponse address;
     private PropertyType type;

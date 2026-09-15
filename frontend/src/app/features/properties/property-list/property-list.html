@@ -36,7 +36,12 @@
   } @else {
     <div class="property-grid__cards">
       @for (property of properties(); track property.id) {
-        <mat-card appearance="outlined" class="property-card">
+        <mat-card
+          appearance="outlined"
+          class="property-card"
+          [class.property-card--clickable]="mode === 'owned'"
+          [routerLink]="mode === 'owned' && property.id ? ['/properties', property.id] : null"
+        >
           <mat-card-header>
             <mat-card-title>{{ property.name }}</mat-card-title>
             <mat-card-subtitle class="property-card__address">
@@ -60,7 +65,7 @@
                 type="button"
                 aria-label="Delete property"
                 [disabled]="deletingPropertyId() === property.id"
-                (click)="onDeleteProperty(property)"
+                (click)="$event.stopPropagation(); onDeleteProperty(property)"
               >
                 <mat-icon fontIcon="delete_outline"></mat-icon>
               </button>
@@ -70,7 +75,7 @@
                 type="button"
                 aria-label="Restore property"
                 [disabled]="restoringPropertyId() === property.id"
-                (click)="onRestoreProperty(property)"
+                (click)="$event.stopPropagation(); onRestoreProperty(property)"
               >
                 <mat-icon fontIcon="restore"></mat-icon>
               </button>

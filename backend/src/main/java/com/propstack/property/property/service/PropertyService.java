@@ -8,6 +8,7 @@ import com.propstack.property.property.persistence.Property;
 import com.propstack.property.property.persistence.PropertyRepository;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class PropertyService {
     }
 
     @Transactional(readOnly = true)
-    public PropertyResponse findById(Long id) {
+    public PropertyResponse findById(UUID id) {
         String organizationId = currentOrganizationResolver.requireCurrentOrganizationId();
         return propertyMapper.toResponse(getOrThrow(id, organizationId));
     }
@@ -57,21 +58,21 @@ public class PropertyService {
         return propertyMapper.toResponse(propertyRepository.save(property));
     }
 
-    public PropertyResponse update(Long id, PropertyRequest request) {
+    public PropertyResponse update(UUID id, PropertyRequest request) {
         String organizationId = currentOrganizationResolver.requireCurrentOrganizationId();
         Property existing = getOrThrow(id, organizationId);
         propertyMapper.updateEntityFromRequest(request, existing);
         return propertyMapper.toResponse(propertyRepository.save(existing));
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         String organizationId = currentOrganizationResolver.requireCurrentOrganizationId();
         Property existing = getOrThrow(id, organizationId);
         existing.setDeletedAt(Instant.now());
         propertyRepository.save(existing);
     }
 
-    public PropertyResponse restore(Long id) {
+    public PropertyResponse restore(UUID id) {
         String organizationId = currentOrganizationResolver.requireCurrentOrganizationId();
         Property existing = propertyRepository
                 .findByIdAndOrganizationIdAndDeletedAtIsNotNull(id, organizationId)
@@ -80,7 +81,7 @@ public class PropertyService {
         return propertyMapper.toResponse(propertyRepository.save(existing));
     }
 
-    private Property getOrThrow(Long id, String organizationId) {
+    private Property getOrThrow(UUID id, String organizationId) {
         return propertyRepository.findByIdAndOrganizationIdAndDeletedAtIsNull(id, organizationId)
                 .orElseThrow(() -> new PropertyNotFoundException(id));
     }

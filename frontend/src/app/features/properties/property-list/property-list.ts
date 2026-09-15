@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,6 +30,7 @@ const LOADING_STATE: PropertyListState = { status: 'loading' };
 @Component({
   selector: 'app-property-list',
   imports: [
+    RouterLink,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
@@ -85,9 +86,9 @@ export class PropertyList {
     return current.status === 'success' ? current.properties : [];
   });
 
-  protected readonly deletingPropertyId = signal<number | null>(null);
+  protected readonly deletingPropertyId = signal<string | null>(null);
   protected readonly deleteErrorMessage = signal<string | null>(null);
-  protected readonly restoringPropertyId = signal<number | null>(null);
+  protected readonly restoringPropertyId = signal<string | null>(null);
   protected readonly restoreErrorMessage = signal<string | null>(null);
 
   protected onAddProperty(): void {
@@ -123,7 +124,7 @@ export class PropertyList {
       });
   }
 
-  private deleteConfirmed(id: number): void {
+  private deleteConfirmed(id: string): void {
     this.deletingPropertyId.set(id);
     this.deleteErrorMessage.set(null);
 
@@ -166,7 +167,7 @@ export class PropertyList {
       });
   }
 
-  private restoreConfirmed(id: number): void {
+  private restoreConfirmed(id: string): void {
     this.restoringPropertyId.set(id);
     this.restoreErrorMessage.set(null);
 

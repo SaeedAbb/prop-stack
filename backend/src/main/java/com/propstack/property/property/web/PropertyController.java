@@ -6,6 +6,7 @@ import com.propstack.property.property.service.PropertyService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +39,7 @@ public class PropertyController {
     }
 
     @GetMapping("/{id}")
-    public PropertyResponse findById(@PathVariable Long id) {
+    public PropertyResponse findById(@PathVariable UUID id) {
         return propertyService.findById(id);
     }
 
@@ -53,18 +54,18 @@ public class PropertyController {
     }
 
     @PutMapping("/{id}")
-    public PropertyResponse update(@PathVariable Long id, @Valid @RequestBody PropertyRequest request) {
+    public PropertyResponse update(@PathVariable UUID id, @Valid @RequestBody PropertyRequest request) {
         return propertyService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         propertyService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/restore")
-    public PropertyResponse restore(@PathVariable Long id) {
+    public PropertyResponse restore(@PathVariable UUID id) {
         return propertyService.restore(id);
     }
 }

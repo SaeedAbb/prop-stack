@@ -1,0 +1,135 @@
+@switch (state().status) {
+  @case ('loading') {
+    <div class="property-detail__state">
+      <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+      <p>Loading property…</p>
+    </div>
+  }
+  @case ('not-found') {
+    <div class="property-detail__state">
+      <mat-icon fontIcon="search_off" class="property-detail__state-icon"></mat-icon>
+      <p>Property not found.</p>
+      <a mat-button routerLink="/properties/owned">Back to properties</a>
+    </div>
+  }
+  @case ('error') {
+    <div class="property-detail__state">
+      <p class="property-detail__error">{{ errorMessage() }}</p>
+      <button mat-button type="button" (click)="load()">Retry</button>
+    </div>
+  }
+  @default {
+    @if (property(); as property) {
+      <div class="property-detail">
+        <div class="property-detail__header">
+          <a mat-icon-button routerLink="/properties/owned" aria-label="Back to properties">
+            <mat-icon fontIcon="arrow_back"></mat-icon>
+          </a>
+          <h1>{{ property.name }}</h1>
+        </div>
+
+        <mat-accordion class="property-detail__panels" multi>
+          <mat-expansion-panel
+            class="property-detail__address-panel"
+            [expanded]="addressExpanded()"
+            (opened)="addressExpanded.set(true)"
+            (closed)="addressExpanded.set(false)"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>Address</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            @if (addressEditing()) {
+              <form
+                novalidate
+                (submit)="
+                  onSaveAddress(
+                    $event,
+                    streetInput.value,
+                    houseNumberInput.value,
+                    cityInput.value,
+                    stateInput.value,
+                    postalCodeInput.value,
+                    countryInput.value
+                  )
+                "
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Street</mat-label>
+                  <input matInput #streetInput type="text" name="street" [value]="property.address.street" required />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>House number</mat-label>
+                  <input matInput #houseNumberInput type="text" name="houseNumber" [value]="property.address.houseNumber" required />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>City</mat-label>
+                  <input matInput #cityInput type="text" name="city" [value]="property.address.city" required />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>State</mat-label>
+                  <input matInput #stateInput type="text" name="state" [value]="property.address.state" required />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Postal code</mat-label>
+                  <input matInput #postalCodeInput type="text" name="postalCode" [value]="property.address.postalCode" required />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Country</mat-label>
+                  <input matInput #countryInput type="text" name="country" [value]="property.address.country" required />
+                </mat-form-field>
+
+                @if (addressErrorMessage(); as message) {
+                  <p class="property-detail__error">{{ message }}</p>
+                }
+
+                <div class="property-detail__address-actions">
+                  <button mat-button type="button" [disabled]="addressSaving()" (click)="onCancelAddress()">Cancel</button>
+                  <button mat-flat-button type="submit" [disabled]="addressSaving()">Save</button>
+                </div>
+              </form>
+            } @else {
+              <dl class="property-detail__address-view">
+                <div class="property-detail__address-field--street">
+                  <dt>Street</dt>
+                  <dd>{{ property.address.street }}</dd>
+                </div>
+                <div class="property-detail__address-field--house-number">
+                  <dt>House number</dt>
+                  <dd>{{ property.address.houseNumber }}</dd>
+                </div>
+                <div class="property-detail__address-field--city">
+                  <dt>City</dt>
+                  <dd>{{ property.address.city }}</dd>
+                </div>
+                <div class="property-detail__address-field--state">
+                  <dt>State</dt>
+                  <dd>{{ property.address.state }}</dd>
+                </div>
+                <div class="property-detail__address-field--postal-code">
+                  <dt>Postal code</dt>
+                  <dd>{{ property.address.postalCode }}</dd>
+                </div>
+                <div class="property-detail__address-field--country">
+                  <dt>Country</dt>
+                  <dd>{{ property.address.country }}</dd>
+                </div>
+              </dl>
+              <div class="property-detail__address-actions">
+                <button mat-button type="button" (click)="onEditAddress()">
+                  <mat-icon fontIcon="edit"></mat-icon>
+                  Edit
+                </button>
+              </div>
+            }
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    }
+  }
+}

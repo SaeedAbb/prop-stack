@@ -1,5 +1,6 @@
 package com.propstack.property.address.dto;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Builder
 public class AddressResponse {
 
-    private Long id;
+    private UUID id;
     private String street;
     private String houseNumber;
     private String city;
