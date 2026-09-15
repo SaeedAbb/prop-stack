@@ -47,6 +47,16 @@
 }
 
 .property-card {
+  &--clickable {
+    cursor: pointer;
+    transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
+
+    &:hover {
+      border-color: var(--mat-sys-primary);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+  }
+
   &__address {
     display: flex;
     align-items: flex-start;

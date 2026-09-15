@@ -1,0 +1,115 @@
+.property-detail {
+  padding: 1.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+
+    h1 {
+      margin: 0;
+    }
+  }
+
+  &__address-panel {
+    border: 1px solid rgb(203, 196, 207);
+    border-radius: 12px;
+
+    .mat-expansion-panel-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding-top: 0.25rem;
+    }
+
+    mat-form-field {
+      width: 100%;
+      max-width: 28rem;
+    }
+  }
+
+  &__address-view {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    row-gap: 1rem;
+
+    > div {
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    > div:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    dt {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--mat-sys-on-surface-variant);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 500;
+      color: rgb(29, 27, 30);
+    }
+  }
+
+  &__address-field--street {
+    grid-column: span 3;
+  }
+
+  &__address-field--house-number {
+    grid-column: span 1;
+  }
+
+  &__address-field--country {
+    grid-column: 1 / -1;
+  }
+
+  &__address-field--city {
+    grid-column: span 2;
+  }
+
+  &__address-field--state,
+  &__address-field--postal-code {
+    grid-column: span 1;
+  }
+
+  &__address-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.property-detail__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.property-detail__state-icon {
+  font-size: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  opacity: 0.5;
+}
+
+.property-detail__error {
+  color: #b91c1c;
+}

@@ -3,7 +3,7 @@ export type PropertyType = 'APARTMENT' | 'HOUSE' | 'COMMERCIAL' | 'BUILDING' | '
 export type PropertyStatus = 'AVAILABLE' | 'RENTED' | 'UNDER_MAINTENANCE' | 'SOLD';
 
 export interface Address {
-  id?: number;
+  id?: string;
   street: string;
   houseNumber: string;
   city: string;
@@ -13,7 +13,7 @@ export interface Address {
 }
 
 export interface Property {
-  id?: number;
+  id?: string;
   name: string;
   address: Address;
   type: PropertyType;
