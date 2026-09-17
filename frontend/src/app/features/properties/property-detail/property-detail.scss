@@ -12,6 +12,7 @@
     }
   }
 
+  &__details-panel,
   &__address-panel {
     border: 1px solid rgb(203, 196, 207);
     border-radius: 12px;
@@ -27,6 +28,52 @@
       width: 100%;
       max-width: 28rem;
     }
+  }
+
+  &__details-panel {
+    margin-bottom: 1rem;
+  }
+
+  &__details-view {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    row-gap: 1rem;
+
+    > div {
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    > div:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    dt {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--mat-sys-on-surface-variant);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 500;
+      color: rgb(29, 27, 30);
+    }
+  }
+
+  &__details-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
   }
 
   &__address-view {

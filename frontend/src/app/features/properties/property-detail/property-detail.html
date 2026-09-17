@@ -30,6 +30,74 @@
 
         <mat-accordion class="property-detail__panels" multi>
           <mat-expansion-panel
+            class="property-detail__details-panel"
+            [expanded]="detailsExpanded()"
+            (opened)="detailsExpanded.set(true)"
+            (closed)="detailsExpanded.set(false)"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>Details</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            @if (detailsEditing()) {
+              <form novalidate (submit)="onSaveDetails($event, nameInput.value)">
+                <mat-form-field appearance="outline">
+                  <mat-label>Name</mat-label>
+                  <input matInput #nameInput type="text" name="name" [value]="property.name" required />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Type</mat-label>
+                  <mat-select [value]="detailsType()" (valueChange)="detailsType.set($event)">
+                    @for (option of typeOptions; track option[0]) {
+                      <mat-option [value]="option[0]">{{ option[1].label }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Status</mat-label>
+                  <mat-select [value]="detailsStatus()" (valueChange)="detailsStatus.set($event)">
+                    @for (option of statusOptions; track option[0]) {
+                      <mat-option [value]="option[0]">{{ option[1].label }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+
+                @if (detailsErrorMessage(); as message) {
+                  <p class="property-detail__error">{{ message }}</p>
+                }
+
+                <div class="property-detail__details-actions">
+                  <button mat-button type="button" [disabled]="detailsSaving()" (click)="onCancelDetails()">Cancel</button>
+                  <button mat-flat-button type="submit" [disabled]="detailsSaving()">Save</button>
+                </div>
+              </form>
+            } @else {
+              <dl class="property-detail__details-view">
+                <div class="property-detail__details-field--name">
+                  <dt>Name</dt>
+                  <dd>{{ property.name }}</dd>
+                </div>
+                <div class="property-detail__details-field--type">
+                  <dt>Type</dt>
+                  <dd>{{ typeDisplay[property.type].label }}</dd>
+                </div>
+                <div class="property-detail__details-field--status">
+                  <dt>Status</dt>
+                  <dd>{{ statusDisplay[property.status].label }}</dd>
+                </div>
+              </dl>
+              <div class="property-detail__details-actions">
+                <button mat-button type="button" (click)="onEditDetails()">
+                  <mat-icon fontIcon="edit"></mat-icon>
+                  Edit
+                </button>
+              </div>
+            }
+          </mat-expansion-panel>
+
+          <mat-expansion-panel
             class="property-detail__address-panel"
             [expanded]="addressExpanded()"
             (opened)="addressExpanded.set(true)"
