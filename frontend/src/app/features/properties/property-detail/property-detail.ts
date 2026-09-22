@@ -8,7 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Property } from '../../../core/models/property.model';
+import { MatSelectModule } from '@angular/material/select';
+import { PROPERTY_STATUS_DISPLAY, PROPERTY_TYPE_DISPLAY } from '../../../core/constants/property-display.constants';
+import { Property, PropertyStatus, PropertyType } from '../../../core/models/property.model';
 import { PropertyService } from '../../../core/services/property.service';
 
 type PropertyDetailState =
@@ -27,6 +29,7 @@ type PropertyDetailState =
     MatInputModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatSelectModule,
   ],
   templateUrl: './property-detail.html',
   styleUrl: './property-detail.scss',
@@ -50,10 +53,23 @@ export class PropertyDetail {
     return current.status === 'error' ? current.message : null;
   });
 
+  protected readonly typeDisplay = PROPERTY_TYPE_DISPLAY;
+  protected readonly statusDisplay = PROPERTY_STATUS_DISPLAY;
+
   protected readonly addressExpanded = signal(true);
   protected readonly addressEditing = signal(false);
   protected readonly addressSaving = signal(false);
   protected readonly addressErrorMessage = signal<string | null>(null);
+
+  protected readonly typeOptions = Object.entries(PROPERTY_TYPE_DISPLAY) as [PropertyType, { label: string }][];
+  protected readonly statusOptions = Object.entries(PROPERTY_STATUS_DISPLAY) as [PropertyStatus, { label: string }][];
+
+  protected readonly detailsExpanded = signal(true);
+  protected readonly detailsEditing = signal(false);
+  protected readonly detailsSaving = signal(false);
+  protected readonly detailsErrorMessage = signal<string | null>(null);
+  protected readonly detailsType = signal<PropertyType | null>(null);
+  protected readonly detailsStatus = signal<PropertyStatus | null>(null);
 
   constructor() {
     this.load();
@@ -145,6 +161,67 @@ export class PropertyDetail {
           console.error('Failed to update address', error);
           this.addressSaving.set(false);
           this.addressErrorMessage.set('Could not save the address. Please try again.');
+        },
+      });
+  }
+
+  protected onEditDetails(): void {
+    const current = this.property();
+    if (!current) {
+      return;
+    }
+
+    this.detailsType.set(current.type);
+    this.detailsStatus.set(current.status);
+    this.detailsEditing.set(true);
+    this.detailsErrorMessage.set(null);
+  }
+
+  protected onCancelDetails(): void {
+    this.detailsEditing.set(false);
+    this.detailsErrorMessage.set(null);
+  }
+
+  protected onSaveDetails(event: SubmitEvent, name: string): void {
+    event.preventDefault();
+
+    const current = this.property();
+    if (!current) {
+      return;
+    }
+
+    const trimmedName = name.trim();
+    const selectedType = this.detailsType();
+    const selectedStatus = this.detailsStatus();
+
+    if (!trimmedName || !selectedType || !selectedStatus) {
+      this.detailsErrorMessage.set('Please fill in name, type and status.');
+      return;
+    }
+
+    this.detailsSaving.set(true);
+    this.detailsErrorMessage.set(null);
+
+    const updated: Property = {
+      ...current,
+      name: trimmedName,
+      type: selectedType,
+      status: selectedStatus,
+    };
+
+    this.propertyService
+      .update(this.id, updated)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (saved) => {
+          this.detailsSaving.set(false);
+          this.detailsEditing.set(false);
+          this.state.set({ status: 'success', property: saved });
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Failed to update property details', error);
+          this.detailsSaving.set(false);
+          this.detailsErrorMessage.set('Could not save the details. Please try again.');
         },
       });
   }

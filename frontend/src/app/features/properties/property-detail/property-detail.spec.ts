@@ -35,8 +35,12 @@ describe('PropertyDetail', () => {
     return TestBed.createComponent(PropertyDetail);
   }
 
-  function clickButtonByText(fixture: { nativeElement: HTMLElement }, label: string): void {
-    const button = Array.from(fixture.nativeElement.querySelectorAll('button')).find((b) => b.textContent?.trim().includes(label));
+  function addressPanel(fixture: { nativeElement: HTMLElement }): HTMLElement {
+    return fixture.nativeElement.querySelector('.property-detail__address-panel') as HTMLElement;
+  }
+
+  function clickButtonByText(scope: HTMLElement, label: string): void {
+    const button = Array.from(scope.querySelectorAll('button')).find((b) => b.textContent?.trim().includes(label));
     (button as HTMLButtonElement).click();
   }
 
@@ -63,7 +67,7 @@ describe('PropertyDetail', () => {
     expect(text(fixture)).toContain('Could not load this property');
 
     propertyService.getById.mockReturnValue(of(property));
-    clickButtonByText(fixture, 'Retry');
+    clickButtonByText(fixture.nativeElement, 'Retry');
     fixture.detectChanges();
 
     expect(propertyService.getById).toHaveBeenCalledTimes(2);
@@ -85,19 +89,19 @@ describe('PropertyDetail', () => {
     const fixture = await createFixture();
     fixture.detectChanges();
 
-    clickButtonByText(fixture, 'Edit');
+    clickButtonByText(addressPanel(fixture), 'Edit');
     fixture.detectChanges();
 
     const streetInput = fixture.nativeElement.querySelector('input[name="street"]') as HTMLInputElement;
     streetInput.value = 'Changed St';
 
-    clickButtonByText(fixture, 'Cancel');
+    clickButtonByText(addressPanel(fixture), 'Cancel');
     fixture.detectChanges();
 
     expect(text(fixture)).toContain('Main St');
     expect(text(fixture)).not.toContain('Changed St');
 
-    clickButtonByText(fixture, 'Edit');
+    clickButtonByText(addressPanel(fixture), 'Edit');
     fixture.detectChanges();
 
     const reseededStreetInput = fixture.nativeElement.querySelector('input[name="street"]') as HTMLInputElement;
@@ -109,7 +113,7 @@ describe('PropertyDetail', () => {
     const fixture = await createFixture();
     fixture.detectChanges();
 
-    clickButtonByText(fixture, 'Edit');
+    clickButtonByText(addressPanel(fixture), 'Edit');
     fixture.detectChanges();
 
     const streetInput = fixture.nativeElement.querySelector('input[name="street"]') as HTMLInputElement;
@@ -118,7 +122,7 @@ describe('PropertyDetail', () => {
     const updated: Property = { ...property, address: { ...property.address, street: 'New Street' } };
     propertyService.update.mockReturnValue(of(updated));
 
-    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    const form = addressPanel(fixture).querySelector('form') as HTMLFormElement;
     form.dispatchEvent(new Event('submit', { cancelable: true }));
     fixture.detectChanges();
 
@@ -132,7 +136,7 @@ describe('PropertyDetail', () => {
       }),
     );
     expect(text(fixture)).toContain('New Street');
-    expect(fixture.nativeElement.querySelector('form')).toBeNull();
+    expect(addressPanel(fixture).querySelector('form')).toBeNull();
   });
 
   it('shows a validation error and does not save when a required field is blank', async () => {
@@ -140,13 +144,13 @@ describe('PropertyDetail', () => {
     const fixture = await createFixture();
     fixture.detectChanges();
 
-    clickButtonByText(fixture, 'Edit');
+    clickButtonByText(addressPanel(fixture), 'Edit');
     fixture.detectChanges();
 
     const streetInput = fixture.nativeElement.querySelector('input[name="street"]') as HTMLInputElement;
     streetInput.value = '   ';
 
-    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    const form = addressPanel(fixture).querySelector('form') as HTMLFormElement;
     form.dispatchEvent(new Event('submit', { cancelable: true }));
     fixture.detectChanges();
 
@@ -159,7 +163,7 @@ describe('PropertyDetail', () => {
     const fixture = await createFixture();
     fixture.detectChanges();
 
-    clickButtonByText(fixture, 'Edit');
+    clickButtonByText(addressPanel(fixture), 'Edit');
     fixture.detectChanges();
 
     const streetInput = fixture.nativeElement.querySelector('input[name="street"]') as HTMLInputElement;
@@ -167,12 +171,96 @@ describe('PropertyDetail', () => {
 
     propertyService.update.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
-    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    const form = addressPanel(fixture).querySelector('form') as HTMLFormElement;
     form.dispatchEvent(new Event('submit', { cancelable: true }));
     fixture.detectChanges();
 
     expect(text(fixture)).toContain('Could not save the address');
-    expect(fixture.nativeElement.querySelector('form')).not.toBeNull();
+    expect(addressPanel(fixture).querySelector('form')).not.toBeNull();
     expect((fixture.nativeElement.querySelector('input[name="street"]') as HTMLInputElement).value).toBe('New Street');
+  });
+
+  it('renders the read-only details once loaded', async () => {
+    propertyService.getById.mockReturnValue(of(property));
+    const fixture = await createFixture();
+    fixture.detectChanges();
+
+    const content = text(fixture);
+    expect(content).toContain('Apartment');
+    expect(content).toContain('Available');
+  });
+
+  it('reverts unsaved detail edits and keeps the panel open when Cancel is clicked', async () => {
+    propertyService.getById.mockReturnValue(of(property));
+    const fixture = await createFixture();
+    fixture.detectChanges();
+
+    const detailsPanel = fixture.nativeElement.querySelector('.property-detail__details-panel') as HTMLElement;
+
+    clickButtonByText(detailsPanel, 'Edit');
+    fixture.detectChanges();
+
+    const nameInput = fixture.nativeElement.querySelector('input[name="name"]') as HTMLInputElement;
+    nameInput.value = 'Changed Name';
+
+    clickButtonByText(detailsPanel, 'Cancel');
+    fixture.detectChanges();
+
+    expect(text(fixture)).toContain('Sunset Apartments');
+    expect(text(fixture)).not.toContain('Changed Name');
+  });
+
+  it('saves the edited details and returns to the read-only view', async () => {
+    propertyService.getById.mockReturnValue(of(property));
+    const fixture = await createFixture();
+    fixture.detectChanges();
+
+    const detailsPanel = fixture.nativeElement.querySelector('.property-detail__details-panel') as HTMLElement;
+
+    clickButtonByText(detailsPanel, 'Edit');
+    fixture.detectChanges();
+
+    const nameInput = fixture.nativeElement.querySelector('input[name="name"]') as HTMLInputElement;
+    nameInput.value = 'Renamed Property';
+
+    const updated: Property = { ...property, name: 'Renamed Property' };
+    propertyService.update.mockReturnValue(of(updated));
+
+    const form = detailsPanel.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+    fixture.detectChanges();
+
+    expect(propertyService.update).toHaveBeenCalledWith(
+      PROPERTY_ID,
+      expect.objectContaining({
+        name: 'Renamed Property',
+        type: property.type,
+        status: property.status,
+        address: property.address,
+      }),
+    );
+    expect(text(fixture)).toContain('Renamed Property');
+    expect(detailsPanel.querySelector('form')).toBeNull();
+  });
+
+  it('shows a validation error and does not save when the name is blank', async () => {
+    propertyService.getById.mockReturnValue(of(property));
+    const fixture = await createFixture();
+    fixture.detectChanges();
+
+    const detailsPanel = fixture.nativeElement.querySelector('.property-detail__details-panel') as HTMLElement;
+
+    clickButtonByText(detailsPanel, 'Edit');
+    fixture.detectChanges();
+
+    const nameInput = fixture.nativeElement.querySelector('input[name="name"]') as HTMLInputElement;
+    nameInput.value = '   ';
+
+    const form = detailsPanel.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+    fixture.detectChanges();
+
+    expect(propertyService.update).not.toHaveBeenCalled();
+    expect(text(fixture)).toContain('Please fill in name, type and status.');
   });
 });
